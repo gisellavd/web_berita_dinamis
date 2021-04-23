@@ -1,0 +1,102 @@
+
+<?php
+    include '../../config/database.php';
+    $query = mysqli_query($kon, "SELECT max(id_user) as kodeTerbesar FROM user");
+    $data = mysqli_fetch_array($query);
+    $id_user = $data['kodeTerbesar'];
+    $id_user++;
+    $huruf = "U";
+    $kodeuser = $huruf . sprintf("%03s", $id_user);
+?>
+    <form action="admin/tambah.php" method="post">
+        <div class="form-group">
+            <label>Kode user</label>
+            <h3><?php echo $kodeuser; ?></h3>
+            <input name="kode_user" value="<?php echo $kodeuser; ?>" type="hidden" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Nama user</label>
+            <input name="nama_user" type="text" class="form-control" placeholder="Masukkan nama" required>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+            <div class="form-group">
+                    <label>Email</label>
+                    <input name="email" type="email" class="form-control" placeholder="Masukkan email" required>
+            </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>No Telp</label>
+                    <input name="no_telp" type="text" class="form-control" placeholder="Masukkan no telp" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input name="username" type="text" class="form-control" placeholder="Masukkan username" required>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input name="password" type="password" class="form-control" placeholder="Masukkan password" required>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+ 
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" class="form-control">
+                    <option value="1">Aktif</option>
+                    <option value="0">Tidak Aktif</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" name="simpan_tambah" class="btn btn-dark">Tambah</button>
+    </form>
+
+<?php
+    if (isset($_POST['simpan_tambah'])) {
+        include '../../config/database.php';
+        
+        function input($data) {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+        }
+    
+        $kode_user=input($_POST["kode_user"]);
+        $nama_user=input($_POST["nama_user"]);
+        $email=input($_POST["email"]);
+        $no_telp=input($_POST["no_telp"]);
+        $username=input($_POST["username"]);
+        $password=md5(input($_POST["password"]));
+        $status=input($_POST["status"]);
+
+        $sql="insert into user (kode_user,nama_user,email,no_telp,username,password,status) values
+        ('$kode_user','$nama_user','$email','$no_telp','$username','$password','$status')";
+        $hasil=mysqli_query($kon,$sql);
+        
+        if ($hasil) {
+            header("Location:../index.php?halaman=admin&tambah=berhasil");
+        }
+        else {
+            header("Location:../index.php?halaman=admin&tambah=gagal");
+
+        }
+        
+    }
+?>
